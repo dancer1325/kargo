@@ -1,6 +1,8 @@
 #!/bin/sh
 
-set -x
+#set -x
+# if there is SOME error -> IMMEDIATELY stop & NOT continue
+set -e
 
 argo_cd_chart_version=9.4.3
 argo_rollouts_chart_version=2.40.6

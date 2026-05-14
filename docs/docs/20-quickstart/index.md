@@ -6,141 +6,85 @@ slug: /quickstart
 
 # Kargo Quickstart
 
-**Kargo** is an open-source project that streamlines how applications are
-promoted across environments, extending GitOps beyond deployment.
-
-## The Pipeline You'll Create
+* goal
+  * promote -- , through a pipeline, -- a change | local Kubernetes cluster
 
 ![Pipeline: nginx repo → Warehouse → test → uat → prod](img/pipeline.svg)
 
-## Spin Up a Local Cluster With Kargo Installed
+## launch a local cluster / contains Kargo
 
-Pick your local Kubernetes setup. One command installs cert-manager, Argo CD,
-and Kargo.
+* goal
+  * install
+    * cert-manager
+    * Argo CD
+    * Kargo
 
-:::info All options require Helm v3.13.1+
+* requirements
+  * Helm v3.13.1+
+  * running local Kubernetes cluster
 
-:::
+* approaches
+  * use [these .sh](/hack/quickstart), OR
+  * [MANUALLY](#custom)
 
-<Tabs groupId="cluster-start">
-<TabItem value="docker-desktop" label="Docker Desktop">
+### ways
 
-If you are a
-[Docker Desktop](https://www.docker.com/products/docker-desktop/)
-user, you can follow
-[these instructions](https://docs.docker.com/desktop/kubernetes/) to enable
-its built-in Kubernetes support.
-
-```shell
-curl -L https://raw.githubusercontent.com/akuity/kargo/main/hack/quickstart/install.sh | sh
-```
-
-:::info
-
-This is one of the fastest paths to a local Kubernetes cluster, but be aware
-that Docker Desktop supports only a _single_ Kubernetes cluster. If that cluster
-reaches a state you are dissatisfied with, resetting it will remove not just
-Kargo-related resources, but _all_ your workloads and data.
-
-:::
-
-</TabItem>
-<TabItem value="orbstack" label="OrbStack">
-
-[OrbStack](https://orbstack.dev/) is a fast, lightweight, drop-in replacement
-for Docker Desktop for macOS only. You can follow
-[these instructions](https://docs.orbstack.dev/kubernetes/) to enable its
-built-in Kubernetes support.
+#### Docker Desktop
 
 ```shell
 curl -L https://raw.githubusercontent.com/akuity/kargo/main/hack/quickstart/install.sh | sh
 ```
 
-:::info
+#### [OrbStack](https://orbstack.dev/)
 
-This is one of the fastest paths to a local Kubernetes cluster, but be aware
-that OrbStack supports only a _single_ Kubernetes cluster. If that cluster
-reaches a state you are dissatisfied with, resetting it will remove not just
-Kargo-related resources, but _all_ your workloads and data.
+* requirements
+  * ⚠️macOS⚠️ 
 
-:::
+```shell
+curl -L https://raw.githubusercontent.com/akuity/kargo/main/hack/quickstart/install.sh | sh
+```
 
-</TabItem>
-<TabItem value="kind" label="kind">
-
-If you have any Docker-compatible container runtime installed (including native
-Docker, Docker Desktop, or OrbStack), you can easily launch a disposable cluster
-just for this quickstart using
-[kind](https://kind.sigs.k8s.io/#installation-and-usage).
+#### kind
 
 ```shell
 curl -L https://raw.githubusercontent.com/akuity/kargo/main/hack/quickstart/kind.sh | sh
 ```
 
-:::info
+* ❌NOT requirements❌
+  * ALREADY local running Kubernetes cluster
+    * Reason:🧠create a NEW one🧠
 
-While this option is a bit more complex than using Docker Desktop or OrbStack
-directly, it offers the advantage of being fully-disposable. If your cluster
-reaches a state you are dissatisfied with, you can simply destroy it and launch
-a new one.
-
-:::
-
-</TabItem>
-<TabItem value="k3d" label="k3d">
-
-If you have any Docker-compatible container runtime installed (including native
-Docker, Docker Desktop, or OrbStack), you can easily launch a disposable cluster
-just for this quickstart using [k3d](https://k3d.io).
+#### k3d
 
 ```shell
 curl -L https://raw.githubusercontent.com/akuity/kargo/main/hack/quickstart/k3d.sh | sh
 ```
 
-:::info
+* ❌NOT requirements❌
+  * ALREADY local running Kubernetes cluster
+    * Reason:🧠create a NEW one🧠
 
-While this option is a bit more complex than using Docker Desktop or OrbStack
-directly, it offers the advantage of being fully-disposable. If your cluster
-reaches a state you are dissatisfied with, you can simply destroy it and launch
-a new one.
+#### Custom
 
-:::
+* goal
+  * execute MANUALLY the installation
+    * ❌!= use [these scripts](/hack/quickstart)❌
 
-</TabItem>
-<TabItem value="more-info" label="Custom">
+* install
+  * cert-manager
+  * Argo CD
+  * Argo Rollouts
+  * Kargo
 
-:::info
+### Troubleshooting
 
-If you are averse to piping a downloaded script directly into a shell, feel free
-to download the applicable script and inspect its contents prior to execution.
-
-Any approach you select should only:
-
-1. Launch a new, local Kubernetes cluster, if applicable
-
-1. Install cert-manager
-
-1. Install Argo CD
-
-1. Install Argo Rollouts
-
-1. Install Kargo
-
-:::
-
-</TabItem>
-</Tabs>
-
-<details>
-
-<summary>Troubleshooting</summary>
-
-- **401 Unauthorized:**  
+TODO:
+* **401 Unauthorized:**  
 
   Ensure you are using **Helm v3.13.1 or later**. Earlier versions may not
   authenticate properly when pulling the Kargo chart.
 
-- **403 Forbidden:**  
+* **403 Forbidden:**  
 
   This is commonly caused by Docker attempting to authenticate to `ghcr.io` with
   an expired token. The Kargo chart and container images are publicly accessible
@@ -150,163 +94,51 @@ Any approach you select should only:
   docker logout ghcr.io
   ```
 
-- **Argo CD UI flashes on login with no error message:**  
+* **Argo CD UI flashes on login with no error message:**  
 
   If the Argo CD UI/dashboard briefly flashes or redirects back to the login
   screen without displaying an error, this may be caused by stale or corrupted
   browser cookies. Clear your browser cookies for `localhost` or open a new
   private/incognito window and try logging in again.
 
-</details>
-  
-<table style={{width: '100%', display: 'table', tableLayout: 'fixed'}}>
-  <tr>
-    <th width="50%">🚀 Argo CD</th>
-    <th width="50%">📦 Kargo</th>
-  </tr>
-  <tr>
-    <td>
-      URL: http://localhost:31080<br/>
-      Username: `admin`<br/>
-      Password: `admin`
-    </td>
-    <td>
-      URL: http://localhost:31081<br/>
-      Password: `admin`<br/>
-      <br/>
-    </td>
-  </tr>
-</table>
+### check | browser
 
-✅ Argo CD and Kargo are now running locally.
+* ArgoCD
+  * http://localhost:31080
+    * admin/admin
+  * http://localhost:31081
+    * Password: admin
 
 ## Set Up Your Demo Repository
 
-1. Fork the sample repository:
+* [sample repository](https://github.com/dancer1325/kargo-demo)
 
-    Go to
-    [https://github.com/akuity/kargo-demo](https://github.com/akuity/kargo-demo)
-    and click <Hlt>Fork</Hlt>. This repository contains application
-    configurations (e.g. Kubernetes manifests) and is the source of truth for
-    our demo cluster. In a real setup, you would create your own configuration
-    repository from scratch.
-
-1. Get a GitHub personal access token (PAT):  
-
-    Kargo will push changes to your fork for **test**, **uat**, and **prod**
-    environments. You need a PAT with **write access** to your fork.
-
-    <details>
-
-    <summary>Need a GitHub personal access token (PAT)?</summary>
-
-    1. Navigate to GitHub → <Hlt>Settings</Hlt> → <Hlt>Developer settings</Hlt>
-       → <Hlt>Personal access tokens</Hlt> → <Hlt>Fine-grained tokens</Hlt>,
-       then click <Hlt>Generate new token</Hlt>.
-
-    1. Under <Hlt>Repository access</Hlt>, select <Hlt>Only select
-       repositories</Hlt> and choose your fork.
-
-    1. Under <Hlt>Permissions</Hlt> → <Hlt>Repository permissions</Hlt>, set
-       <Hlt>Contents</Hlt> to <Hlt>Read and write</Hlt>.
-
-    1. Click <Hlt>Generate token</Hlt> and copy it — it won't be displayed again
-       after navigating away from that page.
-
-    </details>
-
-1. Set environment variables:
+1. Get a GitHub personal access token (PAT)
+   * uses
+     * Kargo push changes -- for -- **test**, **uat**, and **prod** environments
+2. Set environment variables
 
     ```shell
-    export GITOPS_REPO_URL=https://github.com/<your github username>/kargo-demo
-
-    export GITHUB_USERNAME=<your github username>
-
+    export GITOPS_REPO_URL=https://github.com/dancer1325/kargo-demo
+    export GITHUB_USERNAME=dancer1325
     export GITHUB_PAT=<your personal access token>
     ```
 
-:::info Why Kargo writes to Git
+## Create Argo CD Applications / EACH stage
 
-Kargo follows GitOps principles: Your cluster's desired state always comes from
-Git. Kargo promotes artifacts by committing updated configurations to Git. Argo
-CD picks it up and syncs the cluster. Git becomes a full audit trail of every
-promotion.
+* approach
+  * use an Argo CD `ApplicationSet`
 
-:::
+* steps
+  * | [here](examples)
+    * `kubectl apply -f applicationset.yaml`
+      * check | [Argo CD dashboard](http://localhost:31080), that `Application` are out of sync
+        * Reason:🧠`spec.template.spec.source.targetRevision` do NOT exist🧠
+            ![Argo CD Dashboard](img/argo-dashboard.png)
 
-<details>
+## Create Your Kargo Project + Pipeline
 
-<summary>What's in the `kargo-demo` repository?</summary>
-
-You can explore the repository and see that the `main` branch contains common
-configuration in a `base/` directory as well as stage-specific overlays in
-`stages/<stage name>/` directories.
-
-- This layout is typical of a GitOps repository using
-  [Kustomize](https://kustomize.io/) for configuration management of Kubernetes
-  manifests and is not specific to Kargo.
-
-- Kargo also works just as well with [Helm](https://helm.sh).
-
-</details>
-
-## Create Argo CD Applications For Each Stage
-
-We’ll use an Argo CD `ApplicationSet` to create and manage three `Application`s,
-deploying the sample app to **test**, **uat**, and **prod** namespaces, each
-with its own configuration.
-
-```yaml {18,23}
-cat <<EOF | kubectl apply -f -
-apiVersion: argoproj.io/v1alpha1
-kind: ApplicationSet
-metadata:
-  name: kargo-demo
-  namespace: argocd
-spec:
-  generators:
-  - list:
-      elements:
-      - stage: test
-      - stage: uat
-      - stage: prod
-  template:
-    metadata:
-      name: kargo-demo-{{stage}}
-      annotations:
-        kargo.akuity.io/authorized-stage: kargo-demo:{{stage}}
-    spec:
-      project: default
-      source:
-        repoURL: ${GITOPS_REPO_URL}
-        targetRevision: stage/{{stage}}
-        path: .
-      destination:
-        server: https://kubernetes.default.svc
-        namespace: kargo-demo-{{stage}}
-      syncPolicy:
-        syncOptions:
-        - CreateNamespace=true
-EOF
-```
-
-✅ Argo CD Applications created.
-
-<details>
-
-<summary>What you'll see in Argo CD</summary>
-
-When you visit the [Argo CD dashboard](http://localhost:31080), the branches
-referenced by the `targetRevision` fields do not exist yet, and the
-`Application`s will be out of sync. Kargo will create them on first promotion.
-
-![Argo CD Dashboard](img/argo-dashboard.png)
-
-</details>
-
-## Create Your Kargo Project and Pipeline
-
-Run the following command to set up your pipeline. This will create:
+TODO:
 
 - A `Warehouse` that polls the public ECR registry for new versions of the Nginx
   image
@@ -320,145 +152,7 @@ Run the following command to set up your pipeline. This will create:
 
 ```yaml {3,8,21,28,33,44,53,56,63,67,72,75,84,86,89,103,105,108,114,123,125,128}
 cat <<EOF | kubectl apply -f -
-apiVersion: kargo.akuity.io/v1alpha1
-kind: Project
-metadata:
-  name: kargo-demo
----
-apiVersion: v1
-kind: Secret
-type: Opaque
-metadata:
-  name: kargo-demo-repo
-  namespace: kargo-demo
-  labels:
-    kargo.akuity.io/cred-type: git
-stringData:
-  repoURL: ${GITOPS_REPO_URL}
-  username: ${GITHUB_USERNAME}
-  password: ${GITHUB_PAT}
----
-apiVersion: kargo.akuity.io/v1alpha1
-kind: Warehouse
-metadata:
-  name: kargo-demo
-  namespace: kargo-demo
-spec:
-  subscriptions:
-  - image:
-      repoURL: public.ecr.aws/nginx/nginx
-      constraint: ^1.29.0
-      discoveryLimit: 5
----
-apiVersion: kargo.akuity.io/v1alpha1
-kind: PromotionTask
-metadata:
-  name: demo-promo-process
-  namespace: kargo-demo
-spec:
-  vars:
-  - name: gitopsRepo
-    value: ${GITOPS_REPO_URL}
-  - name: imageRepo
-    value: public.ecr.aws/nginx/nginx
-  steps:
-  - uses: git-clone
-    config:
-      repoURL: \${{ vars.gitopsRepo }}
-      checkout:
-      - branch: main
-        path: ./src
-      - branch: stage/\${{ ctx.stage }}
-        create: true
-        path: ./out
-  - uses: git-clear
-    config:
-      path: ./out
-  - uses: kustomize-set-image
-    as: update
-    config:
-      path: ./src/base
-      images:
-      - image: \${{ vars.imageRepo }}
-        tag: \${{ imageFrom(vars.imageRepo).Tag }}
-  - uses: kustomize-build
-    config:
-      path: ./src/stages/\${{ ctx.stage }}
-      outPath: ./out
-  - uses: git-commit
-    as: commit
-    config:
-      path: ./out
-      message: \${{ task.outputs.update.commitMessage }}
-  - uses: git-push
-    config:
-      path: ./out
-  - uses: argocd-update
-    config:
-      apps:
-      - name: kargo-demo-\${{ ctx.stage }}
-        sources:
-        - repoURL: \${{ vars.gitopsRepo }}
-          desiredRevision: \${{ task.outputs.commit.commit }}
----
-apiVersion: kargo.akuity.io/v1alpha1
-kind: Stage
-metadata:
-  name: test
-  namespace: kargo-demo
-spec:
-  requestedFreight:
-  - origin:
-      kind: Warehouse
-      name: kargo-demo
-    sources:
-      direct: true
-  promotionTemplate:
-    spec:
-      steps:
-      - task:
-          name: demo-promo-process
-        as: promo-process
----
-apiVersion: kargo.akuity.io/v1alpha1
-kind: Stage
-metadata:
-  name: uat
-  namespace: kargo-demo
-spec:
-  requestedFreight:
-  - origin:
-      kind: Warehouse
-      name: kargo-demo
-    sources:
-      stages:
-      - test
-  promotionTemplate:
-    spec:
-      steps:
-      - task:
-          name: demo-promo-process
-        as: promo-process
----
-apiVersion: kargo.akuity.io/v1alpha1
-kind: Stage
-metadata:
-  name: prod
-  namespace: kargo-demo
-spec:
-  requestedFreight:
-  - origin:
-      kind: Warehouse
-      name: kargo-demo
-    sources:
-      stages:
-      - uat
-  promotionTemplate:
-    spec:
-      steps:
-      - task:
-          name: demo-promo-process
-        as: promo-process
+
 EOF
 ```
 
@@ -864,3 +558,8 @@ k3d cluster delete kargo-quickstart
 
 </TabItem>
 </Tabs>
+
+## Presentation
+
+* [video](https://youtu.be/0B_JODxyK0w)
+  * TODO: 

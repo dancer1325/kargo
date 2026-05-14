@@ -4,6 +4,8 @@ sidebar_label: Architecture
 
 # Architecture and Topology
 
+topology of a large-scale Kargo deployment
+
 ## Overview
 
 This document describes Kargo's architecture and topology, explaining how

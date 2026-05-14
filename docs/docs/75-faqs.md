@@ -3,100 +3,49 @@ sidebar_label: FAQs
 ---
 
 # Frequently Asked Questions
-
-Welcome to the FAQ page. Here you'll find answers to some of the most common
-questions about Kargo.
-
 ## General Questions
 
 ### _What is Kargo?_
 
-Kargo is an unopinionated
-[continuous promotion](#what-exactly-is-continuous-promotion-anyway) platform
-that helps developers orchestrate the movement of new code and configuration
-through the various "stages" of their applications' lifecycles using GitOps
-principles.
+* [here](/README.md)
 
-### _What exactly is "continuous promotion," anyway?_
+### _What exactly is "continuous promotion,"?_
 
-If you have some familiarity with GitOps, you know that _GitOps agents_ like
-[Argo CD](https://argoproj.github.io/cd/) excel at making the actual state of a
-Kubernetes cluster reflect _desired state_ that is expressed declaratively and
-stored in a Git repository.
+* _GitOps agents_
+  * _Example:_ [Argo CD](https://argoproj.github.io/cd/)
+  * goal
+    * desired state | Git repository == actual state | Kubernetes cluster
 
-GitOps provides no specific guidance, however, on how desirable changes can be
-propagated from the desired state of one stage in an application's lifecycle to
-the desired state of the next. Any means by which such a thing might be
-accomplished, we would consider to be a "promotion process." When that process
-is codified into a pipeline and either partly or fully automated, we consider it
-"continuous promotion."
+* underlying resources / GitOps agent try to reconcile
+  * are varied
+    * _ExampleS:_
+      * particular instance of your application
+      * few microservices
+      * entire Kubernetes cluster
 
-**_Follow up question: Why is this not "continuous deployment?"_**
+* GitOps
+  * out of the scope goal: 
+    * ⚠️how to propagate desired state changes | stage1 -- to the -- desired state changes | next stage⚠️
 
-Because the processes we're focused on do not _perform_ deployments. They focus
-on propagating changes to desired state so that a GitOps agent like Argo CD can
-then perform the heavy lifting.
+* continuous promotion
+  * == propagate desired state changes | pipeline /
+    * partly OR fully automated
+  * ❌!= CD❌
+    * Reason:🧠NOT focus on perform deployments🧠
 
-### _So “stage” is just another word for “environment?”_
+### “stage” vs “environment
 
-Not exactly, but you could think of it that way if it suits your use case.
-
-Technically, a stage is a _promotion target_. It represents a certain set of
-desired state that needs to be altered by a promotion process. The underlying
-resources that a GitOps agent will reconcile against that desired state can be
-varied according to your needs. It could be a particular instance of your entire
-application or just a few microservices that are part of a larger whole. It
-could even be an entire Kubernetes cluster if that's what fits your use case.
-
-### _Is Kargo open source?_
-
-Yes it is! You can find the project [on GitHub](https://github.com/akuity/kargo).
-
-If you like what we're doing, please give us a 🌟!
-
-### _How do I get started?_
-
-These very docs are a great place to start. In particular, we recommend checking
-out the [Core Concepts](./50-user-guide/10-core-concepts/index.md) section or,
-if you're ready to get your hands dirty, our [Quickstart](./20-quickstart/index.md).
-
-### _Where can I get support?_
-
-Project maintainers as well as the broader Kargo community are usually quite
-responsive to [issues](https://github.com/akuity/kargo/issues) and
-[discussions](https://github.com/akuity/kargo/discussions) in the GitHub
-repository.
-
-Our community [Discord channel](https://akuity.community) is also quite active
-and you're invited to join us there!
-
-If you're interested in a commercial distribution of Kargo or professional
-support, check out [akuity.io](https://akuity.io).
-
-### _How can I contribute to the project?_
-
-Find us [on GitHub](https://github.com/akuity/kargo). Open issues. Ask
-questions... or even _answer_ questions!
-
-If you're interested in contributing code, our
-[Contributor Guide](./60-contributor-guide/index.md) will help you get started. You'll also
-find a lot of open issues labeled as
-[good first issue](https://github.com/akuity/kargo/labels/good%20first%20issue)
-or [help wanted](https://github.com/akuity/kargo/labels/help-wanted). If you
-want to work on any of these, comment on the issue to let us know, so we can
-assign it to you to help prevent duplicated efforts. If work or life gets in the
-way and you can't complete the issue -- no problem. Just let us know.
-
-If you're interested in contributing an entire, new feature, please propose the
-feature first and discuss with maintainers before putting a lot of effort into
-the implementation.
+* stage
+  * := set of desired state / are altered -- by a -- promotion process
+  * == promotion target
 
 ## Technical Questions
 
-### _Does Kargo force me to work with a separate branch per stage?_
+### _Does Kargo force me to work with a SEPARATE branch / stage?_
 
-No, it doesn't, although it's a common misconception that it does.
+* ❌NO❌
 
+TODO: 
 Fundamentally, Kargo needs a place to _store_ the output of your promotion
 processes so that it can be picked up and applied by a GitOps agent like Argo
 CD. For all intents and purposes, this may as well be an S3 bucket, but as
@@ -150,16 +99,11 @@ Kargo can accommodate this as well, and once again there are a number of ways
 to approach it depending on your needs and our
 [Patterns](./50-user-guide/30-patterns/index.md) section should help.
 
-### _How do I integrate with multiple Argo CD control planes?_
+### _How do I integrate -- with -- MULTIPLE Argo CD control planes?_
 
-To get an overview of how this can be achieved, head on over to our
-[Architecture](./40-operator-guide/30-architecture/index.md) section to learn
-about the topology of a large-scale Kargo deployment.
+* [Architecture](./40-operator-guide/30-architecture/index.md)
 
 ### _How do I integrate Kargo into my CI pipelines?_
-
-Truthfully, we hope you don't find the need to do this -- at least not
-_directly._
 
 The main impetus for developing Kargo was the lack of tools to comprehensively
 effect [continuous promotion](#what-exactly-is-continuous-promotion-anyway). In
