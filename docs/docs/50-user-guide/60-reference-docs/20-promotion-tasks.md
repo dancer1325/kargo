@@ -5,11 +5,14 @@ toc_max_heading_level: 4
 
 # Promotion Tasks Reference
 
-Promotion Tasks define reusable sets of promotion steps that can be shared across
-multiple [Promotion Templates](15-promotion-templates.md). They come in two forms:
-
-- `PromotionTask`: Scoped to a specific project
-- `ClusterPromotionTask`: Available globally across all projects
+* Promotion Tasks
+  * == reusable sets of promotion steps /
+    * can be shared ACROSS MULTIPLE [Promotion Templates](15-promotion-templates.md)
+  * types
+    * `PromotionTask`
+      * specific project -scope
+    * `ClusterPromotionTask`
+      * AVAILABLE | ALL projects
 
 When a Promotion Template references a promotion task, Kargo inflates the task's
 steps and merges them with the template's steps when creating a `Promotion`.

@@ -4,15 +4,6 @@ sidebar_label: Core Concepts
 
 # Kargo's Core Concepts
 
-Kargo is an unopinionated continuous [promotion](#promotions) platform that
-helps developers orchestrate the movement of new code and configuration through
-the various [stages](#stages) of their applications' lifecycles using GitOps
-principles.
-
-Kargo is light on new terminology and the few new terms it introduces should
-be easy to understand. This page is here to present a high-level overview and
-get you up to speed quickly without getting mired in technical details.
-
 ## Promotions
 
 _Kargo is all about promotions._
@@ -44,14 +35,18 @@ reflect the desired state -- is left to a GitOps agent like Argo CD.
 
 ## Stages
 
-Many users equate stages with _environments_, and that's a fine way to think of
-them if it suits your use case.
+* (MORE OR LESS) == environments
+* == _promotion target_
+  * == desired state / needs to be altered -- by a -- promotion process
 
-Technically, a stage is a _promotion target_. It represents some desired state
-that needs to be altered by a promotion process. The underlying resources that a
+* TODO:
+* define how Freight moves through your pipeline
+The underlying resources that a
 GitOps agent will reconcile against that desired state can be varied according
-to your needs. It could be a particular instance of your entire application or
-just a few microservices that are part of a larger whole. It could even be an
+to your needs
+* It could be a particular instance of your entire application or
+just a few microservices that are part of a larger whole
+* It could even be an
 entire Kubernetes cluster if that's what fits your use case.
 
 Quite importantly, stages can be linked together to form a promotion pipeline
@@ -83,13 +78,14 @@ This is a solid analogy for how freight works in Kargo.
 
 ## Warehouses
 
+TODO: 
 If freight can be conceptualized as boxes, then warehouses are the places those
 boxes come from.
 
-In more technical terms, a warehouse monitors one or more repositories for new
-revisions of artifacts, and when it finds them, it packages the latest revision
-of each together as a new piece of freight that will enter the promotion
-pipeline.
+* responsible for
+  * monitors >=1 repositories / there are NEW revisions of artifacts
+    * if it finds them -> it packages the latest revision of EACH together -- as a -- NEW piece of freight
+      * -> enter the promotion pipeline
 
 ![Warehouse](./img/kargo-warehouses.png)
 

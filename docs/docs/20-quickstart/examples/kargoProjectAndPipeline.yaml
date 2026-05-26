@@ -24,6 +24,7 @@ metadata:
 spec:
   subscriptions:
     - image:
+        # poll public ECR registry / check NEW Nginx versions
         repoURL: public.ecr.aws/nginx/nginx
         constraint: ^1.29.0
         discoveryLimit: 5

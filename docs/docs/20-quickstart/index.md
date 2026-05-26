@@ -31,34 +31,39 @@ slug: /quickstart
 
 #### Docker Desktop
 
-```shell
-curl -L https://raw.githubusercontent.com/akuity/kargo/main/hack/quickstart/install.sh | sh
-```
+* | repo root path
+  * `sh hack/quickstart/install.sh`
+* `kubectl --context kind-infra port-forward -n kargo svc/kargo-api 9090:80`
 
 #### [OrbStack](https://orbstack.dev/)
 
 * requirements
   * ⚠️macOS⚠️ 
 
-```shell
-curl -L https://raw.githubusercontent.com/akuity/kargo/main/hack/quickstart/install.sh | sh
-```
+* | repo root path
+  * `sh hack/quickstart/install.sh`
 
 #### kind
-
-```shell
-curl -L https://raw.githubusercontent.com/akuity/kargo/main/hack/quickstart/kind.sh | sh
-```
 
 * ❌NOT requirements❌
   * ALREADY local running Kubernetes cluster
     * Reason:🧠create a NEW one🧠
 
+* if you
+  * have ALREADY ArgoCD installed
+    * `sh hack/quickstart/kindWithAlreadyArgoInstalled.sh`
+  * do NOT have ArgoCD installed
+    * | repo root path
+      * `sh hack/quickstart/install.sh`
+
 #### k3d
 
-```shell
-curl -L https://raw.githubusercontent.com/akuity/kargo/main/hack/quickstart/k3d.sh | sh
-```
+* ❌NOT requirements❌
+  * ALREADY local running Kubernetes cluster
+    * Reason:🧠create a NEW one🧠
+
+* | repo root path
+  * `sh hack/quickstart/k3d.sh`
 
 * ❌NOT requirements❌
   * ALREADY local running Kubernetes cluster
@@ -103,15 +108,23 @@ TODO:
 
 ### check | browser
 
-* ArgoCD
-  * http://localhost:31080
-    * admin/admin
-  * http://localhost:31081
-    * Password: admin
+* if you
+  * have ALREADY ArgoCD installed
+    * ArgoCD
+      * http://localhost:8080
+        * admin/ check -- via -- `kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath='{.data.password}' | base64 -d`
+    * Kargo
+      * http://localhost:9090
+        * Password: admin
+  * do NOT have ArgoCD installed
+    * ArgoCD
+      * http://localhost:31080
+        * admin/admin
+    * Kargo
+      * http://localhost:31081
+        * Password: admin
 
-## Set Up Your Demo Repository
-
-* [sample repository](https://github.com/dancer1325/kargo-demo)
+## Set Up Your [Demo Repository](https://github.com/dancer1325/kargo-demo)
 
 1. Get a GitHub personal access token (PAT)
    * uses
@@ -138,207 +151,28 @@ TODO:
 
 ## Create Your Kargo Project + Pipeline
 
-TODO:
+* [`Warehouse`](../50-user-guide/10-core-concepts/index.md#warehouses)
+* [`PromotionTask`](../50-user-guide/60-reference-docs/20-promotion-tasks.md)
+* [`Stage`](../50-user-guide/10-core-concepts/index.md#stages) 
 
-- A `Warehouse` that polls the public ECR registry for new versions of the Nginx
-  image
+* ways
+  * [-- via -- `kubectl`](#---via----kubectl)
+  * [-- via -- `kargo`](#---via----kargo)
 
-- A `PromotionTask` that defines a reusable promotion process
+### -- via -- `kubectl`
 
-- Three `Stage` resources that define how Freight moves through your pipeline
+* `kubectl apply -f examples/kargoProjectAndPipeline.yaml`
+* | http://localhost:31081/
+  * choose `kargo-demo` project
 
-<Tabs groupId="login-method">
-<TabItem value="kubectl" label="Using kubectl" default>
+### -- via -- `kargo`
 
-```yaml {3,8,21,28,33,44,53,56,63,67,72,75,84,86,89,103,105,108,114,123,125,128}
-cat <<EOF | kubectl apply -f -
-
-EOF
-```
-
-</TabItem>
-
-<TabItem value="kargo-cli" label="Using the Kargo CLI">
-
-Download the Kargo CLI for your operating system and CPU architecture from
-the [Kargo Dashboard's Downloads page](http://localhost:31081/downloads):
-
-![CLI Tab in Kargo UI](./img/cli-installation.png)
-
-Rename the downloaded binary to `kargo` (or `kargo.exe` for Windows) and move it
-to a location in your file system that is included in the value of your `PATH`
-environment variable.
-
-Log in:
-
-```shell
-kargo login http://localhost:31081 \
-  --admin \
-  --password admin
-```
-
-To create Kargo resources, use the following command:
-
-```yaml
-cat <<EOF | kargo apply -f -
-apiVersion: kargo.akuity.io/v1alpha1
-kind: Project
-metadata:
-  name: kargo-demo
----
-apiVersion: v1
-kind: Secret
-type: Opaque
-metadata:
-  name: kargo-demo-repo
-  namespace: kargo-demo
-  labels:
-    kargo.akuity.io/cred-type: git
-stringData:
-  repoURL: ${GITOPS_REPO_URL}
-  username: ${GITHUB_USERNAME}
-  password: ${GITHUB_PAT}
----
-apiVersion: kargo.akuity.io/v1alpha1
-kind: Warehouse
-metadata:
-  name: kargo-demo
-  namespace: kargo-demo
-spec:
-  subscriptions:
-  - image:
-      repoURL: public.ecr.aws/nginx/nginx
-      constraint: ^1.29.0
-      discoveryLimit: 5
----
-apiVersion: kargo.akuity.io/v1alpha1
-kind: PromotionTask
-metadata:
-  name: demo-promo-process
-  namespace: kargo-demo
-spec:
-  vars:
-  - name: gitopsRepo
-    value: ${GITOPS_REPO_URL}
-  - name: imageRepo
-    value: public.ecr.aws/nginx/nginx
-  steps:
-  - uses: git-clone
-    config:
-      repoURL: \${{ vars.gitopsRepo }}
-      checkout:
-      - branch: main
-        path: ./src
-      - branch: stage/\${{ ctx.stage }}
-        create: true
-        path: ./out
-  - uses: git-clear
-    config:
-      path: ./out
-  - uses: kustomize-set-image
-    as: update
-    config:
-      path: ./src/base
-      images:
-      - image: \${{ vars.imageRepo }}
-        tag: \${{ imageFrom(vars.imageRepo).Tag }}
-  - uses: kustomize-build
-    config:
-      path: ./src/stages/\${{ ctx.stage }}
-      outPath: ./out
-  - uses: git-commit
-    as: commit
-    config:
-      path: ./out
-      message: \${{ task.outputs.update.commitMessage }}
-  - uses: git-push
-    config:
-      path: ./out
-  - uses: argocd-update
-    config:
-      apps:
-      - name: kargo-demo-\${{ ctx.stage }}
-        sources:
-        - repoURL: \${{ vars.gitopsRepo }}
-          desiredRevision: \${{ task.outputs.commit.commit }}
----
-apiVersion: kargo.akuity.io/v1alpha1
-kind: Stage
-metadata:
-  name: test
-  namespace: kargo-demo
-spec:
-  requestedFreight:
-  - origin:
-      kind: Warehouse
-      name: kargo-demo
-    sources:
-      direct: true
-  promotionTemplate:
-    spec:
-      steps:
-      - task:
-          name: demo-promo-process
-        as: promo-process
----
-apiVersion: kargo.akuity.io/v1alpha1
-kind: Stage
-metadata:
-  name: uat
-  namespace: kargo-demo
-spec:
-  requestedFreight:
-  - origin:
-      kind: Warehouse
-      name: kargo-demo
-    sources:
-      stages:
-      - test
-  promotionTemplate:
-    spec:
-      steps:
-      - task:
-          name: demo-promo-process
-        as: promo-process
----
-apiVersion: kargo.akuity.io/v1alpha1
-kind: Stage
-metadata:
-  name: prod
-  namespace: kargo-demo
-spec:
-  requestedFreight:
-  - origin:
-      kind: Warehouse
-      name: kargo-demo
-    sources:
-      stages:
-      - uat
-  promotionTemplate:
-    spec:
-      steps:
-      - task:
-          name: demo-promo-process
-        as: promo-process
-EOF
-```
-
-</TabItem>
-</Tabs>
-
-Open the [Kargo Dashboard](http://localhost:31081/) and select the `kargo-demo`
-project. You should see the pipeline, and `Freight` should appear in the upper
-left after a few seconds.
-
-<details>
-
-<summary>What you'll see in Kargo</summary>
-
-![Kargo Project View](img/kargo-dashboard-projects.png)
-
-</details>
-
-✅ Pipeline created, and `Freight` is available to promote.
+* steps
+  * [download the Kargo CLI](../50-user-guide/05-installing-the-cli)
+  * `kargo login http://localhost:31081 --admin --password admin`
+  * `kargo apply -f examples/kargoProjectAndPipeline.yaml`
+  * | http://localhost:31081/
+    * choose `kargo-demo` project
 
 ## Promote Freight to the Test Stage
 
