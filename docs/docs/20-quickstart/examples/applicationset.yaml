@@ -8,7 +8,7 @@ spec:
     - list:
         elements:
           - stage: test
-          - stage: uat
+          - stage: preprod
           - stage: prod
   template:
     metadata:

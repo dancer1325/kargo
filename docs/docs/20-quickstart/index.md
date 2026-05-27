@@ -9,7 +9,7 @@ slug: /quickstart
 * goal
   * promote -- , through a pipeline, -- a change | local Kubernetes cluster
 
-![Pipeline: nginx repo → Warehouse → test → uat → prod](img/pipeline.svg)
+![Pipeline: nginx repo → Warehouse → test → preprod → prod](img/pipeline.svg)
 
 ## launch a local cluster / contains Kargo
 
@@ -128,7 +128,7 @@ TODO:
 
 1. Get a GitHub personal access token (PAT)
    * uses
-     * Kargo push changes -- for -- **test**, **uat**, and **prod** environments
+     * Kargo push changes -- for -- **test**, **preprod**, and **prod** environments
 2. Set environment variables
 
     ```shell
@@ -169,6 +169,7 @@ TODO:
 
 * steps
   * [download the Kargo CLI](../50-user-guide/05-installing-the-cli)
+  * `mv kargo /usr/local/bin/kargo`
   * `kargo login http://localhost:31081 --admin --password admin`
   * `kargo apply -f examples/kargoProjectAndPipeline.yaml`
   * | http://localhost:31081/
@@ -238,7 +239,7 @@ When you visit your fork at
 
 ✅ After the `Freight` passes the health checks, you'll see a ❤️ on the **test**
 node. Click the `Freight` to confirm it shows <Hlt>Verified</Hlt> in **test**
-which will unlock it for promotion to **uat**.
+which will unlock it for promotion to **preprod**.
 
 :::warning
 
@@ -256,9 +257,9 @@ This intermittent slowness will be addressed in an upcoming release.
 
 :::
 
-## Promote to UAT and then Production
+## Promote to Pre-prod and then Production
 
-Repeat the same steps for **uat**, then **prod**:<br /> (The `Freight` node will
+Repeat the same steps for **preprod**, then **prod**:<br /> (The `Freight` node will
 progressively color-match each stage as it passes through.)
 
 1. Click the truck icon on each `Stage`.
@@ -269,7 +270,7 @@ progressively color-match each stage as it passes through.)
 
 :::info
 
-`Freight` cannot be promoted to the **prod** `Stage` until **uat** verification
+`Freight` cannot be promoted to the **prod** `Stage` until **preprod** verification
 has passed and the `Stage` reaches a **Healthy** state. Verification checks may
 take a few minutes to reconcile.
 
@@ -278,7 +279,7 @@ take a few minutes to reconcile.
 <table style={{width: '100%', display: 'table', tableLayout: 'fixed'}}>
   <tr>
     <th width="33%">🧪 test</th>
-    <th width="33%">🔬 uat</th>
+    <th width="33%">🔬 preprod</th>
     <th width="33%">🚀 prod</th>
   </tr>
   <tr>
@@ -295,13 +296,13 @@ take a few minutes to reconcile.
 <summary>Why can’t I promote directly from **test** to **prod**?</summary>
 
 Unlike the **test** `Stage`, which subscribes to a `Warehouse` that polls an
-image repository in ECR, the **uat** and **prod** `Stage`s subscribe to other,
+image repository in ECR, the **preprod** and **prod** `Stage`s subscribe to other,
 _upstream_ `Stage`s, forming a promotion pipeline:
 
-1. `uat` subscribes to `test`
-2. `prod` subscribes to `uat`
+1. `preprod` subscribes to `test`
+2. `prod` subscribes to `preprod`
 
-This means `Freight` must flow through each `Stage` in order: **test** → **uat**
+This means `Freight` must flow through each `Stage` in order: **test** → **preprod**
 → **prod**.
 
 </details>

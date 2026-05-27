@@ -102,7 +102,7 @@ spec:
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Stage
 metadata:
-  name: uat
+  name: preprod
   namespace: kargo-demo
 spec:
   requestedFreight:
@@ -131,7 +131,7 @@ spec:
         name: kargo-demo
       sources:
         stages:
-          - uat
+          - preprod
   promotionTemplate:
     spec:
       steps:
